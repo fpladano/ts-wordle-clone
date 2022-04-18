@@ -4,7 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsc --watch",
+    "tsc": "tsc",
+    "lint": "ts-standard"
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "extends": [
+      "./node_modules/ts-standard/eslintrc.json"
+    ]
   },
   "repository": {
     "type": "git",
@@ -16,5 +27,11 @@
   "bugs": {
     "url": "https://github.com/fpladano/ts-wordle-clone/issues"
   },
-  "homepage": "https://github.com/fpladano/ts-wordle-clone#readme"
+  "homepage": "https://github.com/fpladano/ts-wordle-clone#readme",
+  "devDependencies": {
+    "eslint-config-prettier": "^8.5.0",
+    "prettier": "^2.6.2",
+    "ts-standard": "^11.0.0",
+    "typescript": "4.6.3"
+  }
 }
