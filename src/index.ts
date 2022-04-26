@@ -2,7 +2,15 @@ import { dictionary } from './utils/dictionary';
 import { targetWords } from './utils/targetWords';
 
 const WORD_LENGTH = 5;
-const targetWord = '';
+
+const offsetFromData: any = new Date(2022, 0, 1);
+const msOffset = Date.now() - offsetFromData;
+const dayOffset = Math.floor(msOffset / 1000 / 60 / 60 / 24);
+const targetWord = targetWords[dayOffset];
+
+const alertContainer = document.querySelector(
+  '[data-alert-container]',
+) as HTMLElement;
 
 const guessGrid = document.querySelector('[data-guess-grid]') as HTMLElement;
 
@@ -27,7 +35,7 @@ function handleMouseClick(event: MouseEvent) {
   }
 
   if (target.matches('[data-enter]')) {
-    // submitGuess();
+    submitGuess();
     return;
   }
 
@@ -39,7 +47,7 @@ function handleMouseClick(event: MouseEvent) {
 
 function handleKeyPress(event: KeyboardEvent) {
   if (event.key === 'Enter') {
-    // submitGuess();
+    submitGuess();
     return;
   }
 
@@ -76,8 +84,29 @@ function deleteKey() {
   delete lastTile.dataset.letter;
 }
 
-function submitGuess() {}
+function submitGuess() {
+  const acitveTiles = [...getActiveTiles()];
+  if (acitveTiles.length !== WORD_LENGTH) {
+    console.log('NOT LONG ENOUGH!');
+    showAlert('Not enough letters!');
+    // shakeTiles(acitveTiles);
+    return;
+  }
+}
 
 function getActiveTiles() {
   return guessGrid.querySelectorAll('[data-state="active"]');
+}
+
+function showAlert(message: string, duration = 1000) {
+  const alert = document.createElement('div');
+  alert.textContent = message;
+  alert.classList.add('alert');
+  alertContainer.prepend(alert);
+  if (duration == null) return;
+
+  setTimeout(() => {
+    alert.classList.add('hide');
+    alert.addEventListener('transitionend', () => alert.remove());
+  }, duration);
 }
