@@ -2,6 +2,7 @@ import { dictionary } from './utils/dictionary';
 import { targetWords } from './utils/targetWords';
 
 const WORD_LENGTH = 5;
+const targetWord = '';
 
 const guessGrid = document.querySelector('[data-guess-grid]') as HTMLElement;
 
@@ -31,7 +32,7 @@ function handleMouseClick(event: MouseEvent) {
   }
 
   if (target.matches('[data-delete]')) {
-    // deleteKey();
+    deleteKey();
     return;
   }
 }
@@ -43,7 +44,7 @@ function handleKeyPress(event: KeyboardEvent) {
   }
 
   if (event.key === 'Backspace' || event.key === 'Delete') {
-    // deleteKey();
+    deleteKey();
     return;
   }
 
@@ -54,7 +55,7 @@ function handleKeyPress(event: KeyboardEvent) {
 }
 
 function pressKey(key: string) {
-  const activeTiles = getActiveFiles();
+  const activeTiles = getActiveTiles();
   if (activeTiles.length >= WORD_LENGTH) return;
 
   const nextTitle = guessGrid.querySelector(
@@ -66,6 +67,17 @@ function pressKey(key: string) {
   nextTitle.dataset.state = 'active';
 }
 
-function getActiveFiles() {
+function deleteKey() {
+  const activeTiles = getActiveTiles();
+  const lastTile = activeTiles[activeTiles.length - 1] as HTMLElement;
+  if (lastTile == null) return;
+  lastTile.textContent = '';
+  delete lastTile.dataset.state;
+  delete lastTile.dataset.letter;
+}
+
+function submitGuess() {}
+
+function getActiveTiles() {
   return guessGrid.querySelectorAll('[data-state="active"]');
 }
