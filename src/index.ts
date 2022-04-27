@@ -157,7 +157,7 @@ function getActiveTiles(): NodeListOf<HTMLElement> {
   return guessGrid.querySelectorAll('[data-state="active"]');
 }
 
-function showAlert(message: string, duration = 1000) {
+function showAlert(message: string, duration: number | null = 1000) {
   const alert = document.createElement('div');
   alert.textContent = message;
   alert.classList.add('alert');
