@@ -39,11 +39,16 @@ function wordleStateInit() {
   return;
 }
 
-function setGuessedWordToState(guess: string, tiles: Element[]) {
+function setGuessedWordToState(guess: string, tiles: HTMLElement[]) {
   const guessedWordsCount = tiles[0].attributes[0].value;
+
   const wordleState = JSON.parse(localStorage.getItem('wordleState') as string);
 
   wordleState.boardState[guessedWordsCount] = guess;
+
+  wordleState.evaluations[guessedWordsCount] = tiles.map(
+    (tile) => tile.dataset.state,
+  );
 
   localStorage.setItem('wordleState', JSON.stringify(wordleState));
 }
@@ -178,7 +183,7 @@ function submitGuess() {
 function flipTile(
   tile: HTMLElement,
   index: number,
-  array: Element[],
+  array: HTMLElement[],
   guess: string,
 ) {
   const letter = tile.dataset.letter;
@@ -248,8 +253,11 @@ function shakeTiles(tiles: Element[]) {
   });
 }
 
-function checkWinLose(guess: string, tiles: Element[]) {
+function checkWinLose(guess: string, tiles: HTMLElement[]) {
   setGuessedWordToState(guess, tiles);
+
+  const wordleState = JSON.parse(localStorage.getItem('wordleState') as string);
+  const hasCorrectWord = wordleState.boardState.includes(targetWord);
 
   if (guess === targetWord) {
     showAlert('You win!', 5000);
@@ -260,7 +268,7 @@ function checkWinLose(guess: string, tiles: Element[]) {
 
   const remainingTiles = guessGrid.querySelectorAll(':not([data-letter])');
 
-  if (remainingTiles.length === 0) {
+  if (remainingTiles.length === 0 && !hasCorrectWord) {
     showAlert(targetWord.toUpperCase(), null);
     stopInteraction();
   }
