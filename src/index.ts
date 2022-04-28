@@ -14,6 +14,9 @@ const targetWord = targetWords[dayOffset];
 const alertContainer = document.querySelector(
   '[data-alert-container]',
 ) as HTMLElement;
+const statisticsContainer = document.querySelector(
+  '[data-statistics-container]',
+) as HTMLElement;
 const guessGrid = document.querySelector('[data-guess-grid]') as HTMLElement;
 const keyboard = document.querySelector('[data-keyboard]') as HTMLElement;
 
@@ -287,4 +290,54 @@ function danceTiles(tiles: Element[]) {
       );
     }, (index * DANCE_ANIMATION_DURATION) / 5);
   });
+}
+
+function showStatistics() {
+  const nextWordleContainer = document.createElement('div');
+  nextWordleContainer.classList.add('next-wordle-container');
+
+  const nextWordleTitle = document.createElement('h1');
+  nextWordleTitle.textContent = 'NEXT WORDLE';
+  nextWordleTitle.classList.add('title');
+  nextWordleContainer.append(nextWordleTitle);
+
+  const nextWordleCountdown = document.createElement('div');
+  nextWordleCountdown.textContent = countdownTimer();
+  nextWordleCountdown.classList.add('countdown');
+  nextWordleContainer.append(nextWordleCountdown);
+
+  statisticsContainer.append(nextWordleContainer);
+
+  const shareBtnContainer = document.createElement('div');
+  shareBtnContainer.classList.add('share-btn-container');
+
+  const shareBtn = document.createElement('button');
+  shareBtn.textContent = 'SHARE';
+  shareBtn.classList.add('share-btn');
+  shareBtnContainer.append(shareBtn);
+
+  statisticsContainer.append(shareBtnContainer);
+
+  setInterval(() => {
+    nextWordleCountdown.textContent = countdownTimer();
+  }, 1000);
+}
+
+showStatistics();
+
+function countdownTimer() {
+  const now = new Date();
+  let midnight = new Date();
+  midnight.setHours(24, 0, 0, 0);
+
+  let remainingTimeToMidnight =
+    midnight.getTime() / 1000 - now.getTime() / 1000;
+
+  const hours = Math.floor(remainingTimeToMidnight / 3600);
+  remainingTimeToMidnight = remainingTimeToMidnight - hours * 3600;
+  const minutes = Math.floor(remainingTimeToMidnight / 60);
+  remainingTimeToMidnight = remainingTimeToMidnight - minutes * 60;
+  const seconds = Math.floor(remainingTimeToMidnight);
+
+  return `${hours}:${minutes}:${seconds}`;
 }
