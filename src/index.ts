@@ -9,6 +9,7 @@ const offsetFromData: any = new Date(2022, 0, 1);
 const msOffset = Date.now() - offsetFromData;
 const dayOffset = Math.floor(msOffset / 1000 / 60 / 60 / 24);
 const targetWord = targetWords[dayOffset];
+// const targetWord = 'house';
 
 const alertContainer = document.querySelector(
   '[data-alert-container]',
@@ -17,7 +18,69 @@ const guessGrid = document.querySelector('[data-guess-grid]') as HTMLElement;
 const keyboard = document.querySelector('[data-keyboard]') as HTMLElement;
 
 console.log("Today's word is " + "'" + targetWord + "'");
+
+gameStateCheck();
 startInteraction();
+
+function wordleStateInit() {
+  const boardState = ['', '', '', '', '', ''];
+  const gameStatus = 'IN_PROGRESS';
+  const evaluations = [null, null, null, null, null, null];
+  const solution = targetWord;
+
+  const wordleState = {
+    boardState,
+    gameStatus,
+    evaluations,
+    solution,
+  };
+
+  localStorage.setItem('wordleState', JSON.stringify(wordleState));
+  return;
+}
+
+function setGuessedWordToState(guess: string, tiles: Element[]) {
+  const guessedWordsCount = tiles[0].attributes[0].value;
+  const wordleState = JSON.parse(localStorage.getItem('wordleState') as string);
+
+  wordleState.boardState[guessedWordsCount] = guess;
+
+  localStorage.setItem('wordleState', JSON.stringify(wordleState));
+}
+
+function validateWordsFromState(key: string, guess: string) {
+  const activeTiles = [...getActiveTiles()];
+  if (activeTiles.length === 5) {
+    activeTiles.forEach((...params) => flipTile(...params, guess));
+    activeTiles.forEach((tile) => {
+      tile.dataset.state = '';
+    });
+  }
+}
+
+function gameStateCheck() {
+  if (!localStorage.getItem('wordleState')) return wordleStateInit();
+
+  if (localStorage.getItem('wordleState') !== null) {
+    const wordleState = JSON.parse(
+      localStorage.getItem('wordleState') as string,
+    );
+
+    if (targetWord !== wordleState.solution) {
+      wordleStateInit();
+      return;
+    }
+
+    wordleState.boardState.forEach((word: string, index: number) => {
+      if (word.length !== 0) {
+        word.split('').forEach((letter) => {
+          pressKey(letter);
+          validateWordsFromState(letter, word);
+        });
+      }
+    });
+  }
+}
 
 function startInteraction() {
   document.addEventListener('click', handleMouseClick);
@@ -67,6 +130,7 @@ function handleKeyPress(event: KeyboardEvent) {
 
 function pressKey(key: string) {
   const activeTiles = getActiveTiles();
+
   if (activeTiles.length >= WORD_LENGTH) return;
 
   const nextTitle = guessGrid.querySelector(
@@ -89,6 +153,7 @@ function deleteKey() {
 
 function submitGuess() {
   const acitveTiles = [...getActiveTiles()];
+
   if (acitveTiles.length !== WORD_LENGTH) {
     console.log('NOT LONG ENOUGH!');
     showAlert('Not enough letters!');
@@ -184,6 +249,8 @@ function shakeTiles(tiles: Element[]) {
 }
 
 function checkWinLose(guess: string, tiles: Element[]) {
+  setGuessedWordToState(guess, tiles);
+
   if (guess === targetWord) {
     showAlert('You win!', 5000);
     danceTiles(tiles);
