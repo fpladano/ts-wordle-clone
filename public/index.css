@@ -186,7 +186,7 @@ body {
   top: 10vh;
   left: 50vw;
   transform: translateX(-50%);
-  z-index: 1;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -210,6 +210,21 @@ body {
   opacity: 0;
 }
 
+.background-filter {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(17, 17, 18, 0.7);
+  opacity: 1;
+  transition: opacity 500ms ease-in-out;
+}
+
+.background-filter.hide {
+  opacity: 0;
+}
+
 .statistics-container {
   position: fixed;
   top: 10vh;
@@ -219,15 +234,56 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: hsl(240, 3%, 7%);
+  background-color: hsl(240, 3%, 10%);
   color: white;
   border-radius: 0.25em;
-  padding: 0.75em;
+  padding: 1.25em;
+  opacity: 1;
+  transition: opacity 500ms ease-in-out;
+}
+
+.statistics-container.hide {
+  opacity: 0;
+}
+
+.close-btn {
+  position: fixed;
+  right: 1em;
+  cursor: pointer;
+}
+
+.details-container {
+  display: flex;
+  margin-bottom: 1.5em;
+}
+
+.details {
+  text-align: center;
+  margin: 0 0.5em;
+}
+
+.details h2 {
+  font-size: 2em;
+  margin: 0;
+  font-weight: 300;
+}
+
+.details h3 {
+  margin: 0;
+  font-size: 0.75em;
+  font-weight: 200;
+}
+
+.end-game-stats-container {
+  display: flex;
+  align-items: stretch;
 }
 
 .title {
   font-size: inherit;
   text-align: center;
+  white-space: nowrap;
+  text-transform: uppercase;
 }
 
 .countdown {
@@ -235,6 +291,12 @@ body {
   font-size: 2em;
   margin-top: 0.25em;
   letter-spacing: 0.05em;
+}
+
+.divider {
+  width: 0.1em;
+  background: white;
+  margin: 0 2em;
 }
 
 .share-btn-container {
@@ -248,7 +310,7 @@ body {
   border-radius: 0.25em;
   font-size: 1.25em;
   font-weight: bold;
-  padding: 0.25em 0.75em;
+  padding: 0.75em 1.5em;
   cursor: pointer;
 }
 

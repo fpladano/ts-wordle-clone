@@ -17,6 +17,11 @@ const alertContainer = document.querySelector(
 const statisticsContainer = document.querySelector(
   '[data-statistics-container]',
 ) as HTMLElement;
+const backgroundFilter = document.querySelector(
+  '.background-filter',
+) as HTMLElement;
+const closeBtn = document.querySelector('.close-btn') as HTMLElement;
+
 const guessGrid = document.querySelector('[data-guess-grid]') as HTMLElement;
 const keyboard = document.querySelector('[data-keyboard]') as HTMLElement;
 
@@ -261,19 +266,26 @@ function checkWinLose(guess: string, tiles: HTMLElement[]) {
 
   const wordleState = JSON.parse(localStorage.getItem('wordleState') as string);
   const hasCorrectWord = wordleState.boardState.includes(targetWord);
+  const isLastGuess = tiles[0].dataset.word === '5' ? true : false;
 
   if (guess === targetWord) {
-    showAlert('You win!', 5000);
+    showAlert('You win!', 2000);
     danceTiles(tiles);
     stopInteraction();
+    setTimeout(() => {
+      endGameStatistics();
+    }, 2000);
     return;
   }
 
   const remainingTiles = guessGrid.querySelectorAll(':not([data-letter])');
 
-  if (remainingTiles.length === 0 && !hasCorrectWord) {
-    showAlert(targetWord.toUpperCase(), null);
+  if (remainingTiles.length === 0 && !hasCorrectWord && isLastGuess) {
+    showAlert(targetWord.toUpperCase(), 2000);
     stopInteraction();
+    setTimeout(() => {
+      endGameStatistics();
+    }, 2000);
   }
 }
 
@@ -292,7 +304,10 @@ function danceTiles(tiles: Element[]) {
   });
 }
 
-function showStatistics() {
+function endGameStatistics() {
+  const endGameContainer = document.createElement('div');
+  endGameContainer.classList.add('end-game-stats-container');
+
   const nextWordleContainer = document.createElement('div');
   nextWordleContainer.classList.add('next-wordle-container');
 
@@ -306,7 +321,12 @@ function showStatistics() {
   nextWordleCountdown.classList.add('countdown');
   nextWordleContainer.append(nextWordleCountdown);
 
-  statisticsContainer.append(nextWordleContainer);
+  endGameContainer.append(nextWordleContainer);
+
+  const dividerLine = document.createElement('div');
+  dividerLine.classList.add('divider');
+
+  endGameContainer.append(dividerLine);
 
   const shareBtnContainer = document.createElement('div');
   shareBtnContainer.classList.add('share-btn-container');
@@ -316,14 +336,26 @@ function showStatistics() {
   shareBtn.classList.add('share-btn');
   shareBtnContainer.append(shareBtn);
 
-  statisticsContainer.append(shareBtnContainer);
+  endGameContainer.append(shareBtnContainer);
+
+  statisticsContainer.append(endGameContainer);
 
   setInterval(() => {
     nextWordleCountdown.textContent = countdownTimer();
   }, 1000);
-}
 
-showStatistics();
+  statisticsContainer.classList.remove('hide');
+  backgroundFilter.classList.remove('hide');
+
+  closeBtn.addEventListener('click', () => {
+    statisticsContainer.classList.add('hide');
+    backgroundFilter.classList.add('hide');
+    setTimeout(() => {
+      statisticsContainer.style.display = 'none';
+      backgroundFilter.style.display = 'none';
+    }, 500);
+  });
+}
 
 function countdownTimer() {
   const now = new Date();
@@ -335,9 +367,12 @@ function countdownTimer() {
 
   const hours = Math.floor(remainingTimeToMidnight / 3600);
   remainingTimeToMidnight = remainingTimeToMidnight - hours * 3600;
-  const minutes = Math.floor(remainingTimeToMidnight / 60);
+  let minutes: number | string = Math.floor(remainingTimeToMidnight / 60);
   remainingTimeToMidnight = remainingTimeToMidnight - minutes * 60;
-  const seconds = Math.floor(remainingTimeToMidnight);
+  let seconds: number | string = Math.floor(remainingTimeToMidnight);
+
+  if (minutes < 10) minutes = '0' + minutes;
+  if (seconds < 10) seconds = '0' + seconds;
 
   return `${hours}:${minutes}:${seconds}`;
 }
