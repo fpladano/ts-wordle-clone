@@ -274,6 +274,8 @@ function checkWinLose(guess: string, tiles: HTMLElement[]) {
     showAlert('You win!', 2000);
     danceTiles(tiles);
     stopInteraction();
+    wordleState.gameStatus = 'FINISHED';
+    localStorage.setItem('wordleState', JSON.stringify(wordleState));
     setTimeout(() => {
       endGameStatistics();
     }, 2000);
@@ -307,8 +309,28 @@ function danceTiles(tiles: Element[]) {
 }
 
 function endGameStatistics() {
+  const wordleState = JSON.parse(localStorage.getItem('wordleState') as string);
+  const gameStatus = wordleState.gameStatus;
+
   backgroundFilter.style.display = 'block';
   statisticsContainer.style.display = 'flex';
+
+  if (gameStatus === 'IN_PROGRESS') {
+    setTimeout(() => {
+      statisticsContainer.classList.remove('hide');
+      backgroundFilter.classList.remove('hide');
+    }, 500);
+
+    closeBtn.addEventListener('click', () => {
+      statisticsContainer.classList.add('hide');
+      backgroundFilter.classList.add('hide');
+      setTimeout(() => {
+        statisticsContainer.style.display = 'none';
+        backgroundFilter.style.display = 'none';
+      }, 500);
+    });
+    return;
+  }
 
   const endGameContainer = document.createElement('div');
   endGameContainer.classList.add('end-game-stats-container');
