@@ -12,7 +12,37 @@ body {
   height: 100vh;
   margin: 0;
   padding: 1em;
-  font-size: clamp(0.5rem, 2.5vmin, 1.5rem);
+  font-size: clamp(1rem, 2.5vmin, 1.25rem);
+}
+
+.navbar {
+  position: relative;
+  left: -1em;
+  top: -1em;
+  width: 100vw;
+  color: white;
+  fill: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px hsl(240, 2%, 23%) solid;
+  padding: 0.5em;
+}
+
+.game-tittle {
+  font-family: 'nyt-karnakcondensed';
+  font-size: 1.75em;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.game-icon {
+  padding-top: 0.25em;
+}
+
+.game-icon > svg {
+  width: 1.5em;
+  height: 1.5em;
 }
 
 .keyboard {
