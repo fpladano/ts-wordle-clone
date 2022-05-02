@@ -307,6 +307,9 @@ function danceTiles(tiles: Element[]) {
 }
 
 function endGameStatistics() {
+  backgroundFilter.style.display = 'block';
+  statisticsContainer.style.display = 'flex';
+
   const endGameContainer = document.createElement('div');
   endGameContainer.classList.add('end-game-stats-container');
 
@@ -346,8 +349,10 @@ function endGameStatistics() {
     nextWordleCountdown.textContent = countdownTimer();
   }, 1000);
 
-  statisticsContainer.classList.remove('hide');
-  backgroundFilter.classList.remove('hide');
+  setTimeout(() => {
+    statisticsContainer.classList.remove('hide');
+    backgroundFilter.classList.remove('hide');
+  }, 500);
 
   closeBtn.addEventListener('click', () => {
     statisticsContainer.classList.add('hide');
@@ -381,9 +386,5 @@ function countdownTimer() {
 }
 
 statisticsIcon.addEventListener('click', () => {
-  statisticsContainer.style.display = 'flex';
-  backgroundFilter.style.display = 'block';
-  setTimeout(() => {
-    endGameStatistics();
-  }, 500);
+  endGameStatistics();
 });

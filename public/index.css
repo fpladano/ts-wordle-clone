@@ -250,6 +250,7 @@ body {
   background-color: rgba(17, 17, 18, 0.7);
   opacity: 1;
   transition: opacity 500ms ease-in-out;
+  display: none;
 }
 
 .background-filter.hide {
@@ -262,7 +263,7 @@ body {
   left: 50vw;
   transform: translateX(-50%);
   z-index: 1;
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
   background-color: hsl(240, 3%, 10%);
