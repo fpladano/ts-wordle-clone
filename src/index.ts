@@ -97,6 +97,60 @@ function gameStateCheck() {
   }
 }
 
+function wordleStatisticsStateInit() {
+  const gamesPlayed = 0;
+  const gamesWon = 0;
+  const maxStreak = 0;
+  const winPercentage = 0;
+  const currentStreak = 0;
+
+  const wordleStatistics = {
+    gamesPlayed,
+    gamesWon,
+    maxStreak,
+    winPercentage,
+    currentStreak,
+  };
+
+  localStorage.setItem('wordleStatistics', JSON.stringify(wordleStatistics));
+  return;
+}
+
+function statisticsStateCheck(win: boolean) {
+  if (!localStorage.getItem('wordleStatistics')) wordleStatisticsStateInit();
+
+  const wordleStatistics = JSON.parse(
+    localStorage.getItem('wordleStatistics') as string,
+  );
+
+  const { gameStatus } = JSON.parse(
+    localStorage.getItem('wordleState') as string,
+  );
+
+  console.log(gameStatus);
+  console.log(wordleStatistics);
+
+  if (win && gameStatus !== 'FINISHED') {
+    wordleStatistics.gamesPlayed++;
+    wordleStatistics.currentStreak++;
+    wordleStatistics.maxStreak = 0;
+    wordleStatistics.gamesWon++;
+    wordleStatistics.winPercentage =
+      (wordleStatistics.gamesWon / wordleStatistics.gamesPlayed) * 100;
+    console.log(wordleStatistics);
+
+    localStorage.setItem('wordleStatistics', JSON.stringify(wordleStatistics));
+  }
+
+  if (!win && gameStatus !== 'FINISHED') {
+    wordleStatistics.gamesPlayed++;
+    wordleStatistics.currentStreak = 0;
+    wordleStatistics.winPercentage =
+      (wordleStatistics.gamesWon / wordleStatistics.gamesPlayed) * 100;
+    localStorage.setItem('wordleStatistics', JSON.stringify(wordleStatistics));
+  }
+}
+
 function startInteraction() {
   document.addEventListener('click', handleMouseClick);
   document.addEventListener('keydown', handleKeyPress);
@@ -274,6 +328,7 @@ function checkWinLose(guess: string, tiles: HTMLElement[]) {
     showAlert('You win!', 2000);
     danceTiles(tiles);
     stopInteraction();
+    statisticsStateCheck(true);
     wordleState.gameStatus = 'FINISHED';
     localStorage.setItem('wordleState', JSON.stringify(wordleState));
     setTimeout(() => {
@@ -287,6 +342,9 @@ function checkWinLose(guess: string, tiles: HTMLElement[]) {
   if (remainingTiles.length === 0 && !hasCorrectWord && isLastGuess) {
     showAlert(targetWord.toUpperCase(), 2000);
     stopInteraction();
+    statisticsStateCheck(false);
+    wordleState.gameStatus = 'FINISHED';
+    localStorage.setItem('wordleState', JSON.stringify(wordleState));
     setTimeout(() => {
       endGameStatistics();
     }, 2000);
