@@ -14,6 +14,8 @@ const targetWord = targetWords[dayOffset];
 const alertContainer = document.querySelector(
   '[data-alert-container]',
 ) as HTMLElement;
+
+const statisticsIcon = document.querySelector('#stats-icon') as HTMLElement;
 const statisticsContainer = document.querySelector(
   '[data-statistics-container]',
 ) as HTMLElement;
@@ -351,6 +353,7 @@ function endGameStatistics() {
     statisticsContainer.classList.add('hide');
     backgroundFilter.classList.add('hide');
     setTimeout(() => {
+      endGameContainer.remove();
       statisticsContainer.style.display = 'none';
       backgroundFilter.style.display = 'none';
     }, 500);
@@ -376,3 +379,11 @@ function countdownTimer() {
 
   return `${hours}:${minutes}:${seconds}`;
 }
+
+statisticsIcon.addEventListener('click', () => {
+  statisticsContainer.style.display = 'flex';
+  backgroundFilter.style.display = 'block';
+  setTimeout(() => {
+    endGameStatistics();
+  }, 500);
+});
