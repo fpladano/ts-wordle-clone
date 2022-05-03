@@ -127,9 +127,6 @@ function statisticsStateCheck(win: boolean | null) {
     localStorage.getItem('wordleState') as string,
   );
 
-  console.log(gameStatus);
-  console.log(wordleStatistics);
-
   if (win && gameStatus !== 'FINISHED') {
     wordleStatistics.gamesPlayed++;
     wordleStatistics.currentStreak++;
@@ -448,6 +445,8 @@ function endGameStatistics() {
   shareBtn.classList.add('share-btn');
   shareBtnContainer.append(shareBtn);
 
+  shareBtn.addEventListener('click', shareBtnEvaluation);
+
   endGameContainer.append(shareBtnContainer);
 
   statisticsContainer.append(endGameContainer);
@@ -490,6 +489,33 @@ function countdownTimer() {
   if (seconds < 10) seconds = '0' + seconds;
 
   return `${hours}:${minutes}:${seconds}`;
+}
+
+function shareBtnEvaluation() {
+  const { evaluations } = JSON.parse(
+    localStorage.getItem('wordleState') as string,
+  );
+
+  const evaluationsEmojis = evaluations
+    .map((evaluation: string[]) => {
+      if (evaluation === null) return null;
+
+      const evaluationToEmojis = evaluation.map((element) => {
+        if (element === 'correct') return '🟩';
+        if (element === 'wrong-location') return '🟨';
+        if (element === 'wrong') return '⬛️';
+      });
+
+      return evaluationToEmojis.join('');
+    })
+    .filter((evaluation: string[]) => evaluation !== null)
+    .join('\n \n');
+
+  const clipboardMessage =
+    'Wordle Clone TS' + ' ' + dayOffset + '\n \n' + evaluationsEmojis;
+
+  navigator.clipboard.writeText(clipboardMessage);
+  showAlert('Copied Results to Clipboard');
 }
 
 statisticsIcon.addEventListener('click', () => {
