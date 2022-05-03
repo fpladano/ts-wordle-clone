@@ -116,7 +116,7 @@ function wordleStatisticsStateInit() {
   return;
 }
 
-function statisticsStateCheck(win: boolean) {
+function statisticsStateCheck(win: boolean | null) {
   if (!localStorage.getItem('wordleStatistics')) wordleStatisticsStateInit();
 
   const wordleStatistics = JSON.parse(
@@ -133,7 +133,10 @@ function statisticsStateCheck(win: boolean) {
   if (win && gameStatus !== 'FINISHED') {
     wordleStatistics.gamesPlayed++;
     wordleStatistics.currentStreak++;
-    wordleStatistics.maxStreak = 0;
+    wordleStatistics.maxStreak = Math.max(
+      wordleStatistics.maxStreak,
+      wordleStatistics.currentStreak,
+    );
     wordleStatistics.gamesWon++;
     wordleStatistics.winPercentage =
       (wordleStatistics.gamesWon / wordleStatistics.gamesPlayed) * 100;
@@ -142,7 +145,7 @@ function statisticsStateCheck(win: boolean) {
     localStorage.setItem('wordleStatistics', JSON.stringify(wordleStatistics));
   }
 
-  if (!win && gameStatus !== 'FINISHED') {
+  if (win === false && gameStatus !== 'FINISHED') {
     wordleStatistics.gamesPlayed++;
     wordleStatistics.currentStreak = 0;
     wordleStatistics.winPercentage =
@@ -367,8 +370,32 @@ function danceTiles(tiles: Element[]) {
 }
 
 function endGameStatistics() {
+  statisticsStateCheck(null);
+
   const wordleState = JSON.parse(localStorage.getItem('wordleState') as string);
   const gameStatus = wordleState.gameStatus;
+
+  const { gamesPlayed, maxStreak, winPercentage, currentStreak } = JSON.parse(
+    localStorage.getItem('wordleStatistics') as string,
+  );
+
+  const gamesPlayedElement = document.querySelector(
+    '[data-stats-played]',
+  ) as HTMLElement;
+  const winRateElement = document.querySelector(
+    '[data-stats-rate]',
+  ) as HTMLElement;
+  const currentStreakElement = document.querySelector(
+    '[data-stats-cstreak]',
+  ) as HTMLElement;
+  const maxStreakElement = document.querySelector(
+    '[data-stats-mstreak]',
+  ) as HTMLElement;
+
+  gamesPlayedElement.innerHTML = gamesPlayed;
+  winRateElement.innerHTML = winPercentage;
+  currentStreakElement.innerHTML = currentStreak;
+  maxStreakElement.innerHTML = maxStreak;
 
   backgroundFilter.style.display = 'block';
   statisticsContainer.style.display = 'flex';
